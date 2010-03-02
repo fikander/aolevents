@@ -1,0 +1,86 @@
+9
+
+dir
+0
+svn://localhost/django-aolevents2/socialregistration/templates/socialregistration
+svn://localhost/django-aolevents2
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+twitter_button.html
+file
+
+
+
+add
+
+account_inactive.html
+file
+
+
+
+add
+
+openid.html
+file
+
+
+
+add
+
+xd_receiver.html
+file
+
+
+
+add
+
+setup.html
+file
+
+
+
+add
+
+openid_form.html
+file
+
+
+
+add
+
+facebook_button.html
+file
+
+
+
+add
+
+facebook_js.html
+file
+
+
+
+add
+
+friendfeed_button.html
+file
+
+
+
+add
+
+facebook.html
+file
+
+
+
+add
+

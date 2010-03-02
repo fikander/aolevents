@@ -1,0 +1,54 @@
+{% load facebook_tags %}
+
+        <div class="bluebox">
+    
+	<p><center> <span class="caps"> <a href="/account/register/">Register</a>, <a href="/account/login/">login</a> or use</span>
+	        {% facebook_button %}
+	<span class="caps">to:</span></center>
+	<br/>
+	<ul>
+	<li>receive e-mail notifications about new or updated events in your area</li>
+	<li>receive e-mail notifications about international/special events</li>
+	<li>get reminders about your favourite events</li>
+	<li>RSVP for events and discuss them</li>
+	<li>add your own events</li>	
+	</ul>
+	</p>
+	</div>
+	
+{% comment %}
+
+    <div style="margin:0 auto; width:200px;">
+        <a href="/account/register/">	<button type="submit" style="width:200px;">Register</button>	</a>
+    </div>
+    <br>
+	<p style="margin:0; clear:both;"><span class="caps" ><center>or</center></span></p>
+	<hr class="space"/>
+
+<form action="/account/login/" method="post">
+	<table>
+	  	<tr><th><label for="id_username"><span class="caps">Username:</span></label></th><td><input id="id_username" type="text" name="username" maxlength="30" /></td></tr>
+		<tr><th><label for="id_password"><span class="caps">Password:</span></label></th><td><input type="password" name="password" id="id_password" /></td></tr>
+		<tr><td colspan="2">
+		    <div style="margin:0 auto; width:200px;">
+			<button type="submit" style="width:200px;">Login</button>
+			</div>
+			</td>
+		</tr>
+	</table>
+</form>
+
+	<p style="margin:0; clear:both;"><span class="caps" ><center>or</center></span></p>
+	<hr class="space"/>
+
+    <center>
+        <fb:login-button v="2" size="large" onlogin="window.location='{% if logged_in %}{% url facebook_connect %}{% else %}{% url facebook_login %}{% endif %}';">Facebook Connect</fb:login-button>
+    </center>
+
+{% endcomment %}
+
+<span class="caps" ><center>Here's video that will help you get started</center></span>
+<br/>
+<center>
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/3A84pdIYmic&hl=en_US&fs=1&rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/3A84pdIYmic&hl=en_US&fs=1&rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+</center>

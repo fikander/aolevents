@@ -1,0 +1,50 @@
+
+    
+    {% if mainpage %}
+    
+	    <table class="bluebox" id="search_form" style="margin:0;">
+    	<tr>
+	    	<th style="width:25%;"><span class="caps">{{ search_form.country.label }}:</span></th>
+	    	<td>{{ search_form.country }}</td></tr>
+	    <tr>
+	    	<th><span class="caps">{{ search_form.region.label }}:</span></th>
+	    	<td>{{ search_form.region }}</td></tr>
+	    <tr>
+	    	<th><span class="caps">{{ search_form.forwho.label }}:</span></th>
+	    	<td>{{ search_form.forwho }}</td></tr>
+	    <tr><td colspan="2">
+    <button type="submit" name="search" style="width:350px;" value="search">Search events</button>
+    </td>
+    </tr>
+	    </table>
+
+	{% else %}
+		<div id="search_form">
+		<span class="caps">{{ search_form.country.label }}:</span><br/>
+		{{ search_form.country }}<br/>
+
+		<span class="caps">{{ search_form.region.label }}:</span><br/>
+		{{ search_form.region }}<br/>
+
+    	<hr/>
+
+		<span class="caps">{{ search_form.forfree.label }}:</span><br/>
+		{{ search_form.forfree }}<br/>
+
+		<span class="caps">{{ search_form.forwho.label }}:</span><br/>
+		{{ search_form.forwho }}<br/>
+
+        <div id="id_typelist_container" style="display:none;">
+		<span class="caps">{{ search_form.typelist.label }}:</span><br/>
+		{{ search_form.typelist }}<br/>
+		</div>
+
+    <div style="margin:0 auto; width:200px;">
+        <button type="button" name="search" style="width:200px;" value="search">Search</button>
+        <button type="submit" name="subscribe" style="width:200px;" value="subscribe">Subscribe & Search</button>
+    </div>
+
+		</div>
+
+	{% endif %}
+

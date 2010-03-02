@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ `id -u` -ne 0 ] ; then
+    echo "You have to be ROOT to run this"
+    exit 1
+fi
+
+echo "Checking netstat for running SMTP servers"
+netstat -lp | grep smtp
+
+if [ $? -eq 0 ] ; then
+    echo "SMTP server already running"
+    exit 1
+fi
+
+echo "Starting smtp server"
+python utils/smtp_server.py &

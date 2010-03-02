@@ -1,0 +1,43 @@
+{% extends "base-2col.html" %}
+{% block title %}My events{% endblock %}
+
+{% block extra-head %}
+{% endblock %}
+
+{% block left-column %}
+{% endblock %}
+
+{% block content %}
+
+<h2>Not moderated events</h2>
+
+<table>
+  {% for event in object_list %}
+    <tr>
+      <td><a href="{% url events.views.view_event_show key_id=event.key.id %}">{{ event }}</a></td>
+      <td>{% if event.active %}
+          active
+      {% else %}
+          inactive
+      {% endif %}
+           - <a href="{% url events.views.view_event_toggle key_id=event.key.id %}">Toggle</a>
+      </td>
+      <td><a href="{% url events.views.view_event_moderate_toggle %}?key_id={{ event.key.id }}&next=http://{{ request.META.HTTP_HOST }}{{ request.path }}">Allow</a></td>
+      <td><a href="{% url events.views.view_event_delete key_id=event.key.id %}">Delete</a></td>
+
+    </tr>
+  {% endfor %}
+<table>
+
+<div>
+  {% if has_previous %}
+    <a href="{% url events.views.view_event_unmoderated %}?page={{ previous }}">&lt;-previous</a>
+  {% endif %}
+  {% if has_next %}
+    <a href="{% url events.views.view_event_unmoderated %}?page={{ next }}">next-&gt;</a>
+  {% endif %}
+</div>
+
+
+
+{% endblock %}

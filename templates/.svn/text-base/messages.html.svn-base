@@ -1,0 +1,13 @@
+
+        <div id="messages" class="span-24 last">
+            {% if error %}<div class="error">{{ error }}</div>{% endif %}
+            {% if info %}<div class="notice">{{ info }}</div>{% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="notice" id="msg_{{ forloop.counter }}">
+                	{{ message }}
+                	<a onclick="javascript:$('#msg_{{ forloop.counter }}').fadeOut(1000);">(hide)</a>
+                </div>
+                {% endfor %}
+            {% endif %}            
+        </div>

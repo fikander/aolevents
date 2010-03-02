@@ -1,0 +1,47 @@
+9
+
+dir
+1
+svn://localhost/django-aolevents2/common/django_aep_export/django_templates/templates/gis
+svn://localhost/django-aolevents2
+
+
+
+2009-10-06T19:32:35.811475Z
+1
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0
+
+kml
+dir
+
+sitemaps
+dir
+
+admin
+dir
+
+google
+dir
+

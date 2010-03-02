@@ -1,0 +1,51 @@
+9
+
+dir
+0
+svn://localhost/django-aolevents2/socialregistration/templatetags
+svn://localhost/django-aolevents2
+add
+
+
+
+
+
+
+
+svn:special svn:externals svn:needs-lock
+
+friendfeed_tags.py
+file
+
+
+
+add
+
+openid_tags.py
+file
+
+
+
+add
+
+__init__.py
+file
+
+
+
+add
+
+twitter_tags.py
+file
+
+
+
+add
+
+facebook_tags.py
+file
+
+
+
+add
+

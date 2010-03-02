@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Event{% endblock %}
+
+
+{% block extra-head %}
+    <script type="text/javascript">
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            // init little map with location
+            var loc = new google.maps.LatLng( {{ object.location.lat }}, {{ object.location.lon }} );
+
+            LocationShow.initialize(loc, "{{ object.name|escapejs }}");
+            
+            // favourite button
+            FavButton.makeButton(
+                    "#event_{{ object.key.id }}",
+                    {% if is_fav %}
+                    true
+                    {% else %}
+                    false
+                    {% endif %},
+            		{% if user.is_authenticated %}
+            		true
+            		{% else %}
+            		false
+            		{% endif %}
+            		);
+        })
+    })
+    </script>
+{% endblock %}
+
+
+
+{% block content %}
+    <span class="caps">{{ object.type }}</span><br/><br/>
+    <div id="event_{{ object.key.id }}" class="span-1"></div>  <h2><span class="alt">{{ object.name }}</span></h2>
+
+{% comment %}
+    {{ object.favourite_set.count }} other{{ object.favourite_set.count|pluralize }} like this event
+{% endcomment %}
+
+    <div class="notice">
+        {% if invitation %}
+            You have been invited for this event by <fb:name uid="{{ invitation }}"></fb:name>. Would you like to
+        {% else %}
+            Would you like to
+        {% endif %}
+
+        <a class="FBConnectButton FBConnectButton_Medium" href="#" onclick="facebookCallPublish('', 
+                                                 { 'name':'{{ object.name|escapejs }}',
+                                                   'href':'{{ invitation_link }}',
+                                                   'description':'{{ object.type|escapejs }} is taking place on {{ object.date_start|date }} in {{ object.country.long_name|escapejs }}, {{ object.address|escapejs }}.'},
+                                                   null); return false;">
+        <span class="FBConnectButton_Text">Share it on your Wall</span></a> or
+        
+        <a class="FBConnectButton FBConnectButton_Medium" href="http://{{ request.META.HTTP_HOST }}{% url events_fb.views.invite_friends_for_event key_id=object.key.id %}?next=http://{{ request.META.HTTP_HOST }}{{ request.path }}">
+        <span class="FBConnectButton_Text">Invite friends</span></a>
+    ?<br/>
+            Click <img src="{{ MEDIA_URL }}events/Favorite-16x16_bw.png"/> to express you interest and receive updates about this event.
+            <a href="
+                {% if in_iframe %}
+                    {% url events_fb.views.favourite %}
+                {% else %}
+                    {% url events.views.view_event_subscribed %}
+                {% endif %}
+                ">Other events you liked.</a>
+    </div>
+
+	<hr/>
+
+{% comment %}
+	<div id="search-suggestions" class="span-18 last notice">
+        Click <img src="{{ MEDIA_URL }}events/Favorite-16x16_bw.png"/> to express you interest and receive updates about htis event.<br/>
+        Click <img src="{{ MEDIA_URL }}global/icon_facebook_16x16.png"/> to share this event with your friends on Facebook. You're welcome to comment on it at the bottom of this page.
+	</div>
+
+	<div id="sharing-buttons" class="span-18 last">
+
+        <div class="span-1">
+
+                <img src="{{ MEDIA_URL }}global/icon_facebook_32x32.png"
+                onclick="facebookCallPublish('', { 'name':'{{ object.name|escapejs }}',
+                                                   'href':'{{ invitation_link }}',
+                                                   'description':'{{ object.type|escapejs }} is taking place on {{ object.date_start|date }} in {{ object.country.long_name|escapejs }}, {{ object.address|escapejs }}.'}, null); return false;"
+                alt="Share on facebook"/>
+
+        </div>
+
+	    <div class="span-6 last">
+            <a href="http://{{ request.META.HTTP_HOST }}{% url events_fb.views.invite_friends_for_event key_id=object.key.id %}?next=http://{{ request.META.HTTP_HOST }}{{ request.path }}">Invite friends!</a>
+	    </div>
+	
+	</div>
+{% endcomment %}
+
+	<div id="left-column" class="span-8 colborder">
+
+        <table>
+        <tr><td class="caps">Starts on</td><td>{{ object.date_start|date:"D d M Y" }} at {{ object.date_start|time:"H:i" }}<br/> ({{ object.date_start|timeuntil }} from now)</td></tr>
+        <tr><td class="caps">Ends on</td><td>{{ object.date_end|date:"D d M Y" }} at {{ object.date_end|time:"H:i" }}</td></tr>
+        <tr><td class="caps">Country</td>
+            <td>{{ object.country.long_name }} [{{ object.country.key.name }}]<br/>
+                {% if in_iframe %}
+                <a href="http://{{ request.META.HTTP_HOST }}/fb/?country={{ object.country.key.name }}&region=all&forwho=members&search=search">more events in {{ object.country.long_name }}.</a><br/>
+                {% else %}
+                <a href="http://{{ request.META.HTTP_HOST }}/events/?country={{ object.country.key.name }}&region=all&forwho=members&search=search">more events in {{ object.country.long_name }}.</a><br/>        
+                {% endif %}
+            </td></tr>
+        {% if object.region %}
+            <tr><td class="caps">Region</td><td>{{ object.region.long_name }}</td></tr>
+		{% endif %}        
+        <tr><td class="caps">Address</td><td>{{ object.address }}</td></tr>
+        <tr><td class="caps">Recurrence</td><td>{{ object.recurrent }}</td></tr>
+        <tr><td class="caps">Free</td><td>{% if object.free %}yes{% else %}no{% endif %}</td></tr>
+        </table>
+
+    	{% if object.source_url %}
+            <a href="{{ object.source_url }}">Original source of this information</a>
+    	{% endif %}
+
+	</div>
+
+
+	<div id="right-column" class="span-8 last">
+		<div id="map_canvas" style="width:300px; height:220px;"></div>
+		<hr class="space"/>
+	</div>
+	
+	
+	<hr/>
+
+	<div id="description" class="span-17 last itemdescription">
+
+	<h2 class="alt">Details</h2>
+		{{ object.description|safe|linebreaks }}
+		<hr class="space"/>
+	<h2 class="alt">Fees</h2>		
+		{{ object.fees|safe }}
+		<hr class="space"/>
+		{% if object.file_set %}
+	<h2 class="alt">Attachments</h2>
+		    <ul>
+		    {% for file in object.file_set %}
+		        <li>
+		        	<a href="{{ file.get_absolute_url }}">{{ file.name }}</a>
+		        </li>
+		    {% endfor %}
+		    </ul>
+		<hr class="space"/>		    
+		{% endif %}
+
+		Event added by {% if object.creator.get_profile %}<fb:name uid="{{ object.creator.get_profile.uid }}"></fb:name>{% else %}<span class="caps">{{ object.creator.username }}</span>{% endif %}
+
+		{% ifequal user.id object.creator.id %}
+		    (it's you, so you can <a href="/events/edit/{{ object.key.id }}/" {% if in_iframe %}target="_blank"{% endif %}>edit this event</a>)
+		{% endifequal %}
+
+    </div>
+	<hr/>
+	<div id="comments" class="span-18 last">
+
+	<h2 class="alt">Comments</h2>
+	
+	    <fb:comments width="700"></fb:comments>
+
+	</div>
+
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+    {% block main %}
+
+        {% include "messages.html" %}
+
+        <div id="left-column" class="span-6">
+            {% block left-column %}
+             Hello World from the left-column
+            {% endblock %}
+        </div>
+
+        <div id="content" class="span-18 last">
+            {% block content-header %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+
+    {% endblock %}
+

@@ -1,0 +1,188 @@
+
+from django.db.models import permalink, signals
+from google.appengine.ext import db
+from django.contrib.auth.models import User
+
+from properties import EnumProperty
+
+# Create your models here.
+
+
+class Country(db.Model):
+    long_name = db.StringProperty()
+    translated_name = db.StringProperty()
+
+    def __unicode__(self):
+        return u'%s [%s]' % (self.long_name, self.key().name())
+
+class Region(db.Model):
+    long_name = db.StringProperty()
+    translated_name = db.StringProperty()
+    # there shouldn't be region without a country
+    country = db.ReferenceProperty(Country, required=True)
+
+    def __unicode__(self):
+        return u'%s [%s]' % (self.long_name, self.key().name())
+
+class Event(db.Model):
+
+    created  = db.DateTimeProperty(verbose_name = 'Creation date', auto_now_add = True)
+    modified = db.DateTimeProperty(verbose_name = 'Last modified', auto_now = True)
+
+    active = db.BooleanProperty(verbose_name = 'Active', default = True, required = True)
+    # If false it hasn't been seen by administrator yet.
+    moderated = db.BooleanProperty(default = False, required = True)
+
+    name = db.StringProperty(verbose_name = 'Synopsis', indexed = False, required = True, multiline = False)
+    slug = db.StringProperty(verbose_name = 'slug', indexed = False, multiline = False)
+
+    creator = db.ReferenceProperty(User, verbose_name='Created by', indexed = True)
+
+    TYPE_CHOICE = [
+                   (0,  'Course: Part I'),
+                   (1,  'Course: Part II'),
+                   (2,  'Course: International Part II/III'),
+                   (3,  'Course: Sahaj Samadhi Meditation'),
+                   (4,  'Course: DSN'),
+                   (5,  'Course: ART Excel'),
+                   (6,  'Course: YES'),
+                   (7,  'Course: YES+'),
+                   (8,  'Course: Sri Sri Yoga'),
+                   (9,  'Course: APEX'),
+                   (10, 'Course: Ayurvedic Cookery Class'),
+                   (11, 'Health & Happiness/First Step'),
+                   (12, 'Introduction talk'),
+                   (13, 'Sudarshan Kriya'),
+                   (14, 'Knowledge Session'),
+                   (15, 'Satsang - open'),
+                   (16, 'Satsang - for AOL members'),
+                   (17, 'Ayurvedic Cookery'),
+                   (18, 'Eternity'),
+                   (19, 'TTC: Sri Sri Yoga'),
+                   (20, 'TTC: Part I/Art Excel/YES/YES+'),
+                   (21, 'Other - open'),
+                   (22, 'Other - for AOL members'),
+                   ]
+
+    OPEN_EVENTS_MASK    =   int('00000000001000101001110000000001', 2)
+    MEMBERS_EVENTS_MASK =   int('11111111111111111111111111111111', 2) # THIS SHOULD BE ALL 1s !!
+
+
+    type = EnumProperty(verbose_name='Event type', choices = map(lambda x:x[1], TYPE_CHOICE),
+                        default = TYPE_CHOICE[1][1], indexed = True)
+
+    location = db.GeoPtProperty(indexed = False)
+
+    # country and region are used to limit number of events when querying database
+    #country = db.StringProperty(indexed = True, required = True)
+    #region = db.StringProperty(indexed = True)
+    country = db.ReferenceProperty(Country, verbose_name='Country', indexed = True)
+    region = db.ReferenceProperty(Region, verbose_name='Region', indexed = True)
+
+    address = db.PostalAddressProperty(verbose_name='Address', indexed = False)
+    description = db.TextProperty(verbose_name='Event description')
+    free = db.BooleanProperty(verbose_name='Is it free?', default = False, required = True)
+    fees = db.TextProperty(verbose_name='Fees')
+
+
+    date_start = db.DateTimeProperty(verbose_name='Start date and time', indexed = True, required = True)
+    date_end = db.DateTimeProperty(verbose_name='End data and time', indexed = True, required = True)
+    
+    RECURRENT_CHOICE = [
+                        (0, 'no'),
+                        (1, 'daily'),
+                        (2, 'weekly'),
+                        (3, 'bi-weekly'),
+                        (4, 'monthly'),
+                        (5, 'yearly'),
+                        ]
+    
+    recurrent = EnumProperty(verbose_name='Does it repeat?', choices = map(lambda x:x[1], RECURRENT_CHOICE),
+                             default = RECURRENT_CHOICE[1][1], indexed = True )
+
+    # Featured events are visible on the main page. The higher the number the more important the event and it shows higher.
+    featured_priority = db.IntegerProperty(verbose_name='Featured priority', default=0)
+    
+    #
+    # For events created by scrappers
+    #
+
+    # which feed was it created from
+    source_url = db.LinkProperty()
+    # checksum provided by the scrapper - unique id of the event on that page
+    source_checksum = db.StringProperty()
+    
+
+    def __unicode__(self):
+        return u'[%s] %s at %s from %s' % (self.type, self.name, self.address, self.date_start)
+
+    @permalink
+    def get_absolute_url(self):
+        return ( 'events.views.view_event_show', (), {'key': self.key() } )
+
+
+
+class Favourite(db.Model):
+    ''' many to many for subscribing for events '''
+    event = db.ReferenceProperty(Event, required=True)
+    user  = db.ReferenceProperty(User, required=True)
+
+    def __unicode__(self):
+        return u'User: %s likes %s' % (self.user.username, self.event.name)
+
+
+class RSVP(db.Model):
+    ''' many to many relatiopnship between events and people '''
+
+    (UNKNOWN, ATTENDING, NOTATTENDING, TENTATIVE) = range(4)
+    
+    event = db.ReferenceProperty(Event, required=True)
+    user = db.ReferenceProperty(User, required=True)
+    state = db.IntegerProperty(default=UNKNOWN)
+
+
+class Subscription(db.Model):
+    ''' user's new/updated events filter
+    any new or updated events that match this filter will trigger notification
+    if country = None - update on all events being entered in the database
+    '''
+    _MAX_SUBSCRIPTIONS_PER_USER = 5
+
+    user = db.ReferenceProperty(User, required = True)
+    country = db.ReferenceProperty(Country)
+    region = db.ReferenceProperty(Region)
+    event_types = db.IntegerProperty( default = Event.MEMBERS_EVENTS_MASK )
+    free = db.BooleanProperty()
+
+    def __unicode__(self):
+        if self.country and self.region:
+            return u'User: %s, filter: %s, %s for %d' % (self.user.username, self.country.key().name(), self.region.key().name(), self.event_types)
+        elif self.country:
+            return u'User: %s, country filter: %s for %d' % (self.user.username, self.country.key().name(), self.event_types)
+        else:
+            return u'User: %s, global filter for %d' % (self.user.username, self.event_types)
+
+
+class File(db.Model):
+    owner = db.ReferenceProperty(Event, required=True, collection_name='file_set')
+    name = db.StringProperty(required=True)
+    file = db.BlobProperty(required=True)
+
+    @permalink
+    def get_absolute_url(self):
+        return ('events.views.download_file', (), {'key': self.key(),
+                                                  'name': self.name})
+
+    def __unicode__(self):
+        return u'File: %s' % self.name
+
+
+class Mail(db.Model):
+    created  = db.DateTimeProperty(verbose_name = 'Creation date', auto_now_add = True)
+
+    user  = db.ReferenceProperty(User, required = True)
+    read  = db.BooleanProperty()
+    deleted = db.BooleanProperty()
+    title = db.StringProperty()
+    msg   = db.TextProperty()
+

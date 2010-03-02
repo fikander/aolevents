@@ -1,0 +1,92 @@
+9
+
+dir
+1
+svn://localhost/django-aolevents2/registration/locale
+svn://localhost/django-aolevents2
+
+
+
+2009-10-06T19:32:35.811475Z
+1
+
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0
+
+sr
+dir
+
+ru
+dir
+
+de
+dir
+
+sv
+dir
+
+bg
+dir
+
+es_AR
+dir
+
+ja
+dir
+
+zh_TW
+dir
+
+he
+dir
+
+el
+dir
+
+zh_CN
+dir
+
+ar
+dir
+
+en
+dir
+
+pt_BR
+dir
+
+es
+dir
+
+fr
+dir
+
+nl
+dir
+
+pl
+dir
+
+it
+dir
+

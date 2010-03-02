@@ -1,0 +1,41 @@
+{% load facebook_tags %}
+
+	<p><span class="caps">Register</span> to:
+	<ul>
+	<li>receive e-mail notifications about new or updated events in your area</li>
+	<li>receive e-mail notifications about international/special events</li>
+	<li>get reminders about your favourite events</li>
+	<li>RSVP for events</li>
+	<li>add your own events</li>	
+	</ul>
+	</p>
+		    <div style="margin:0 auto; width:200px;">
+		    <a href="/account/register/">
+			<button type="submit" style="width:200px;">Register</button>
+			</a>
+			</div>
+
+<br>
+	
+	<p style="margin:0; clear:both;"><span class="caps" ><center>or</center></span></p>
+
+	<hr class="space"/>
+
+<form action="/account/login/" method="post">
+	<table>
+	  	<tr><th><label for="id_username"><span class="caps">Username:</span></label></th><td><input id="id_username" type="text" name="username" maxlength="30" /></td></tr>
+		<tr><th><label for="id_password"><span class="caps">Password:</span></label></th><td><input type="password" name="password" id="id_password" /></td></tr>
+		<tr><td colspan="2">
+		    <div style="margin:0 auto; width:200px;">
+			<button type="submit" style="width:200px;">Login</button>
+			</div>
+			</td>
+		</tr>
+	</table>
+</form>
+
+	<p style="margin:0; clear:both;"><span class="caps" ><center>or</center></span></p>
+	<hr class="space"/>
+
+<center>{% facebook_button %}</center>
+{% facebook_js %}

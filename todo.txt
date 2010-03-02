@@ -1,0 +1,18 @@
+cookis na poczatek
+RSVP na ajaxie
+subskrypcja mailowa - w menu
+historyczne eventy - w menu (statistics)
+sortowanie wynikow, pokazac kursy w nastepnych X dniach
+przeniesc filtry na lewo
+dodata support dla regionow (ladowanie dynamiczne nazw regionow do combo boxa)
+dodac 'search', zeby rzeczy nei ladowaly sie niepotrzebnie po kazdym wybraniu w combo boxie
+edycja wlasnych eventow - profil uzytkownikow
+repeating events - jak to rozwiazac?
+moderowanie eventow
+rich text editor do opisow
+tlumaczenie menu na polski/niemiecki
+tlumaczenie automatyczne opisow eventow z uzyciem google API
+
+
+menu
+statistics/my profile/

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Special events{% endblock %}
+
+    {% block extra-head %}
+    <script type="text/javascript">
+    
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            FeaturedEvents.initialize("#event_list", {% if user.is_authenticated %}true{% else %}false{% endif %}, "&in_iframe=1");
+            FeaturedEvents.loadDataFeatured(1);
+
+            RegionComboBox.attachOnChangeToComboBox("#id_country", "#id_region", true, true);
+        })
+    })
+
+    </script>
+
+    {% endblock %}
+    
+    {% block main %}
+
+        {% include "messages.html" %}
+
+        <div id="welcome" class="span-18 last">
+        <center><h2 class="alt">The Art of Living is a multi-faceted, not-for-profit educational and humanitarian NGO with a presence in over 140 countries. Founded in 1982 by His Holiness Sri Sri Ravi Shankar, the Art of Living, today, is one of the largest voluntary organisations in the world. 
+        </h2>
+        There are currently <span class="caps">{{ events_count }}</span> events scheduled all over the world.</center>
+        </div>
+        
+        <hr class="space"/>
+        <hr/>
+        
+        <div class="span-18 last">
+        <center><span class="caps">Featured events</span></center>
+        <hr class="space"/>
+	        <div id="event_list">
+
+	        </div>
+        </div>
+
+        <hr class="space"/>
+        <hr class="space"/>
+
+{% comment %}
+        <div id="facebook_fans" class="span-18 last">
+            <fb:fan width="700px" profile_id="{{ FACEBOOK_PROFILE_ID }}" stream="0" connections="8"></fb:fan>
+            <fb:bookmark type="on-facebook"></fb:bookmark>
+       </div>
+{% endcomment %}
+
+    {% endblock %}

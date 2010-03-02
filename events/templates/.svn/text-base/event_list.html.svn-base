@@ -1,0 +1,160 @@
+{% extends "base-2col.html" %}
+{% block title %}Events list{% endblock %}
+
+{% block extra-head %}
+    <script type="text/javascript">
+
+    function updateSearchForm()
+    {
+    	if ($("input[name='forwho']:checked").val() === 'custom')
+    	{
+			$("#id_typelist_container").slideDown("slow");
+    	}
+    	else
+    	{
+	    	$("#id_typelist_container").slideUp("slow");
+	    }
+    }
+
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            EventMap.initialize(
+            		"#id_country",
+            		"#id_region",
+            		"#id_forfree",
+            		"input[name='forwho']:checked",
+            		"#id_typelist :selected",
+            		"#sort_by",
+            		"#event_list",
+            		"button[name='search']",
+            		{{ OPEN_EVENTS_MASK }},
+            		{{ MEMBERS_EVENTS_MASK }},
+            		{% if user.is_authenticated %}
+            		true
+            		{% else %}
+            		false
+            		{% endif %}
+            		);
+
+            //attachOnChangeToSearchForm(true);
+
+            // hide/show multiselect box
+            updateSearchForm();
+            $("input[name='forwho']").change( function() {
+	            updateSearchForm();
+            });
+
+			// dynamic update of regions combo box
+            RegionComboBox.attachOnChangeToComboBox("#id_country", "#id_region", true, true);            
+        })
+    })
+
+    </script>
+    
+{% endblock %}
+
+{% block left-column %}
+
+    <form class="bluebox" name="searchForm" method="get" action="{% url events.views.view_subscribe %}">
+    {% include "search_form.html" %}
+    <hr/>
+    </form>
+
+    <hr class="space">
+
+    <div class="bluebox">
+
+    <center><span class="caps">Your subscriptions <a href="{% url events.views.view_event_subscribed %}">(edit)</a>:</span></center>
+
+    {% if subscription_list %}
+        
+        <table>
+        {% for subscription in subscription_list %}
+            <tr><td>
+    
+                {% if subscription.country %}
+                    {{ subscription.country.long_name }},
+                    {% if subscription.region %}
+                        {{ subscription.region.long_name }}
+                    {% else %}
+                        All regions
+                    {% endif %}    
+                {% else %}
+                    Whole world
+                {% endif %}
+
+            </td><td>
+            <button type="button" name="goto_{{ subscription.key.id }}" value="search" onclick="javascript:window.location='{% url events.views.view_event_list subscription_id=subscription.key.id %}';">Go</button>        
+            </td></tr>
+        {% endfor %}
+        </table>
+
+    {% else %}
+
+    <center>You don't have any subscriptions yet. Use Subscribe & Search to create them.</center>        
+
+    {% endif %}
+    </div>
+    
+    {% comment %}
+        <ul class="nobullets">
+       	    <li><div class="icons-sun-32 icon-sun-32-2"></div> Part I
+	        <li><img class="icons-sun-32 icon-sun-32-3"/> Part II</li>
+            <li><img class="icons-sun-32 icon-sun-32-4"/> Part III</li>
+        </ul>
+    {% endcomment %}
+
+{% endblock %}
+
+{% block content %}
+
+    {% comment %} blah {% endcomment %}
+    <div id="map_canvas" style="width:650px; height:300px; margin:0 auto;"></div>
+
+    <div style="width:650px; margin:0 auto;" class="notice" id="notice_under_map_canvas">
+    <span class="caps">Pan</span> (drag & drop) and <span class="caps">resize</span> the map to filter events.
+    Only the events visible on the map will be shown on the list.
+    <a onclick="javascript:$('#notice_under_map_canvas').fadeOut(1000);">(hide)</a>
+	</div>
+
+    <hr class="space"/>
+
+    <hr class="space"/>
+
+    Sort by: <select id="sort_by" name="sort by">
+    <option value="date-asc">Start Date: Ascending</option>
+    <option value="date-desc">Start Date: Descending</option>    
+    <option value="type">Type</option>
+    </select>
+
+    <div id="event_list">
+	<center><img src='{{ MEDIA_URL }}global/wait.gif'/></center>
+    </div>
+
+
+{% if user.is_superuser %}
+
+<ul>
+  {% for event in object_list %}
+    <li>
+      <a href="{% url events.views.view_event_show key=event.key %}">{{ event }}</a>
+      <a href="{% url events.views.view_event_edit key=event.key %}">Edit</a>
+      <a href="{% url events.views.view_event_delete key=event.key %}">Delete</a>
+    </li>
+  {% endfor %}
+</ul>
+
+<div>
+  {% if has_previous %}
+    <a href="{% url events.views.view_event_list %}?page={{ previous }}">&lt;-previous</a>
+  {% endif %}
+  {% if has_next %}
+    <a href="{% url events.views.view_event_list %}?page={{ next }}">next-&gt;</a>
+  {% endif %}
+</div>
+
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+
+<p>You're logged in as
+<span class="caps">{{ user.username }}</span>
+You can now:
+
+	<div style="margin:0 auto; width:300px;">
+
+		<a href="/events/subscribed/">
+		<button type="submit" style="width:300px;">	    <img class="icons-fav-20 icons-fav-on-20"/>My favourite events</button>
+		</a>
+		
+		<a href="/account/register/">
+		<button type="submit" style="width:300px;">Preferences</button>
+		</a>
+
+		<hr class="space"/>
+		<hr/>		
+		<a href="/events/add/">
+		<button type="submit" style="width:300px;">Add new event</button>
+		</a>
+
+		<a href="/events/mine/">
+		<button type="submit" style="width:300px;">Events I've created</button>
+		</a>
+
+	</div>
+</p>

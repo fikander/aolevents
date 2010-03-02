@@ -1,0 +1,44 @@
+{% extends "base-2col.html" %}
+{% block title %}My events{% endblock %}
+
+{% block extra-head %}
+{% endblock %}
+
+{% block left-column %}
+{% endblock %}
+
+{% block content %}
+
+<h2>Events I've created</h2>
+
+
+<table>
+  {% for event in object_list %}
+    <tr>
+      <td><a href="{% url events.views.view_event_show key=event.key %}">{{ event }}</a></td>
+      <td>{% if event.active %}
+          active
+      {% else %}
+          inactive
+      {% endif %}
+           - <a href="{% url events.views.view_event_toggle key=event.key %}">Toggle</a>
+      </td>
+      <td><a href="{% url events.views.view_event_edit key=event.key %}">Edit</a></td>
+      <td><a href="{% url events.views.view_event_delete key=event.key %}">Delete</a></td>
+
+    </tr>
+  {% endfor %}
+<table>
+
+<div>
+  {% if has_previous %}
+    <a href="{% url events.views.view_event_mine %}?page={{ previous }}">&lt;-previous</a>
+  {% endif %}
+  {% if has_next %}
+    <a href="{% url events.views.view_event_mine %}?page={{ next }}">next-&gt;</a>
+  {% endif %}
+</div>
+
+
+
+{% endblock %}

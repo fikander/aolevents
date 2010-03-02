@@ -1,0 +1,191 @@
+{% extends "base-1col.html" %}
+{% block title %}Create event{% endblock %}
+
+{% block extra-head %}
+    <script type="text/javascript">
+
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+            LocationSetter.initialize();
+
+            // create rich text editor
+            $("textarea").each(function(n, obj) {
+                fck = new FCKEditor(obj.id);
+                fck.BasePath = "/admin-media/fckedior/";
+                fck.ReplaceTextarea();
+            });
+        })
+    })
+    
+    function getLocationFromMap(from_div_id, to_input_id) {
+        document.getElementById(to_input_id).value = document.getElementById(from_div_id).innerHTML;
+    }
+
+
+    </script>
+    
+    <style type="text/css">
+    
+h2 {
+//    border: 1px solid red;
+    background-color: #EEEEFF;    
+}
+    </style>
+
+{% endblock %}
+
+{% block content %}
+{% comment %}
+{% endcomment %}
+
+<h1>
+{% if object %}Edit existing event{% else %}Create new Event{% endif %}
+</h1>
+
+<form action="" method="post" enctype="multipart/form-data">
+<table>
+
+<tr><td colspan="2"><h2> synopsis </h2></td></tr>
+
+<tr><th>{{ form.form.name.label_tag }}</th>
+	<td>
+		{% if form.form.name.errors %}
+			<div class="error">{{ form.form.name.errors }}</div>
+		{% endif %}
+		{{ form.form.name }}
+	</td><td>
+		{{ form.form.name.help_text }}
+	</td>
+	</tr>
+
+
+<tr><th>{{ form.form.type.label_tag }}</th>
+	<td>
+		{% if form.form.type.errors %}
+			<div class="error">{{ form.form.type.errors }}</div>
+		{% endif %}
+		{{ form.form.type }}
+	</td><td>
+		{{ form.form.type.help_text }}
+	</td>
+	</tr>
+
+
+<tr><th>{{ form.form.active.label_tag }}</th>
+	<td>
+		{{ form.form.active }}
+	</td><td>
+		  	<div class="notice">{{ form.form.active.help_text }}</div>
+	</td></tr>
+
+<tr><td colspan="2"><h2> location </h2></td></tr>
+
+<tr><th>{{ form.form.country.label_tag }} (select on the map)</th><td>
+  	{% if form.form.country.errors %}
+  		<div class="error">{{ form.form.country.errors }}</div>
+  	{% endif %}
+    {{ form.form.country }}
+    <span id="country_name"></span>
+</td></tr>
+
+<tr><th>{{ form.form.region.label_tag }} (select on the map)</th><td>
+  	{% if form.form.region.errors %}
+  		<div class="error">{{ form.form.region.errors }}</div>
+  	{% endif %}
+
+    {{ form.form.region }}
+    <span id="region_name"></span>
+</td></tr>
+
+<tr><th>{{ form.form.address.label_tag }}</th> <td>
+	{% if form.form.address.errors %}
+	    <div class="error">{{ form.form.address.errors }}</div>
+	{% endif %}
+    {{ form.form.address }}<br/>
+    <a href="javascript:LocationSetter.geocodeAddress(document.getElementById('id_address').value);">find on map</a> |
+    <a href="javascript:getLocationFromMap('address', 'id_address');">get from map</a>
+</td><td>
+	<div class="notice">{{ form.form.address.help_text }}</div>
+</td></tr>
+
+
+<tr><th>Location on map</th><td>
+    <div id="map_canvas" style="width:450px; height:250px;"></div>
+    Address on the map (copy it to Address field): <span id="address"></span>
+    {{ form.form.location }}
+</td></tr>
+
+
+<tr><td colspan="2"><h2> dates </h2></td></tr>
+<tr><th>{{ form.form.date_start.label_tag }}</th>
+  <td>
+  	{% if form.form.date_start.errors %}
+  		<div class="error">{{ form.form.date_start.errors }}</div>
+  	{% endif %}
+      {{ form.form.date_start }}
+  </td><td>
+  	<div class="notice">{{ form.form.date_start.help_text }}</div>
+  </td>
+</tr>
+
+
+<tr><th>{{ form.form.date_end.label_tag }}</th>
+  <td>
+	{% if form.form.date_end.errors %}
+  	  	<div class="error">{{ form.form.date_end.errors }}</div>
+  	{% endif %}
+      {{ form.form.date_end }}
+  </td><td>
+      <div class="notice">{{ form.form.date_end.help_text }}</div>
+  </td>
+</tr>
+
+
+<tr><th>{{ form.form.recurrent.label_tag }}</th>
+  <td>
+     {{ form.form.recurrent }}
+  </td><td>
+      <div class="notice">{{ form.form.recurrent.help_text }} </div>
+  </td>
+</tr>
+
+<tr><td colspan="2"><h2> description and attachments </h2></td></tr>
+
+<tr><th>{{ form.form.free.label_tag }}</th>
+  <td>{{ form.form.free.errors }}
+      {{ form.form.free }}
+  </td><td>
+        {{ form.form.free.help_text }}
+  </td>
+</tr>
+
+<tr><th>{{ form.form.fees.label_tag }}</th>
+  <td>{{ form.form.fees.errors }}
+      {{ form.form.fees }}
+  </td><td>
+      <div class="notice">{{ form.form.fees.help_text }}</div>
+  </td>
+</tr>
+
+<tr><th>{{ form.form.description.label_tag }}</th>
+  <td>{{ form.form.description.errors }}
+      {{ form.form.description }}
+  </td><td>
+      <div class="notice">{{ form.form.description.help_text }}</div>
+  </td>
+</tr>
+
+        {% for field in form.formsets %}
+            {{ field }}
+        {% endfor %}
+
+    <tr><td colspan="2">
+      <input type="submit" 
+        value="{% if object %}Apply changes{% else %}Create{% endif %}" />
+    </td></tr>
+    
+  </table>
+  
+</form>
+
+{% endblock %}

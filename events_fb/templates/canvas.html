@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Events list{% endblock %}
+
+{% block extra-head %}
+    <script type="text/javascript">
+
+    function updateSearchForm()
+    {
+    	if ($("input[name='forwho']:checked").val() === 'custom')
+    	{
+			$("#id_typelist_container").slideDown("slow");
+    	}
+    	else
+    	{
+	    	$("#id_typelist_container").slideUp("slow");
+	    }
+    }
+
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            EventMap.initialize(
+            		"#id_country",
+            		"#id_region",
+            		"#id_forfree",
+            		"input[name='forwho']:checked",
+            		"#id_typelist :selected",
+            		"#sort_by",
+            		"#event_list",
+            		"button[name='search']",
+            		{{ OPEN_EVENTS_MASK }},
+            		{{ MEMBERS_EVENTS_MASK }},
+            		{% if user.is_authenticated %}
+            		true,
+            		{% else %}
+            		false,
+            		{% endif %}
+            		"&in_iframe=1"
+            		);
+
+            //attachOnChangeToSearchForm(true);
+
+            // hide/show multiselect box
+            updateSearchForm();
+            $("input[name='forwho']").change( function() {
+	            updateSearchForm();
+            });
+
+			// dynamic update of regions combo box
+            RegionComboBox.attachOnChangeToComboBox("#id_country", "#id_region", true, true);            
+        })
+    })
+
+    </script>
+    
+{% endblock %}
+
+
+{% block content %}
+
+{% comment %}
+<fb:prompt-permission perms="read_stream,publish_stream">Do you want application to publish information about events?</fb:prompt-permission>
+{% endcomment %}
+
+        {% include 'search_form_horizontal.html' %}
+
+    <div style="width:650px; margin:0 auto;" class="notice" id="notice_under_map_canvas">
+    Hi <fb:name uid="loggedinuser" useyou="false" firstnameonly="true" linked="false"></fb:name>. You can <span class="caps">Pan</span> (drag & drop) and <span class="caps">resize</span> the map to filter events.
+    Only the events visible on the map will be shown on the list.
+    <a onclick="javascript:$('#notice_under_map_canvas').fadeOut(1000);">(hide)</a>
+	</div>
+
+    <div id="map_canvas" style="width:700px; height:300px; margin:0 auto;"></div>
+
+    <hr class="space"/>
+
+    <hr class="space"/>
+
+    Sort by: <select id="sort_by" name="sort by">
+    <option value="date-asc">Start Date: Ascending</option>
+    <option value="date-desc">Start Date: Descending</option>    
+    <option value="type">Type</option>
+    </select>
+
+    <div id="event_list">
+	<center><img src='{{ MEDIA_URL }}global/wait.gif'/></center>
+    </div>
+
+
+{% endblock %}

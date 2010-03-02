@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Events list{% endblock %}
+
+{% block content %}
+
+{% comment %}
+<span class="hidden">{{ next }}?skipped=1</span>
+{% endcomment %}
+
+<fb:serverFbml style="width:755px; height=655px;">
+<script type="text/fbml">
+
+	<fb:request-form action="{{ next }}?skipped=1" method=POST invite="true" type="Art of Living Events"
+	content="{{ content }}">
+	<fb:multi-friend-selector max="20" actiontext="Let others know about Art of Living Events!" rows="5" exclude_ids="{{ exclude_ids }}">
+	</fb:multi-friend-selector>
+	</fb:request-form>
+
+</script>
+</fb:serverFbml>
+
+{% endblock %}

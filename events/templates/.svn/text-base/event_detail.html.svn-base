@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Event{% endblock %}
+
+
+{% block extra-head %}
+    <script type="text/javascript">
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            // init little map with location
+            var loc = new google.maps.LatLng( {{ object.location.lat }}, {{ object.location.lon }} );
+
+            LocationShow.initialize(loc, "{{ object.name }}");
+            
+            // favourite button
+            FavButton.makeButton(
+                    "#event_{{ object.key.id }}",
+                    {% if is_fav %}
+                    true
+                    {% else %}
+                    false
+                    {% endif %},
+            		{% if user.is_authenticated %}
+            		true
+            		{% else %}
+            		false
+            		{% endif %}
+            		);
+        })
+    })
+    </script>
+{% endblock %}
+
+
+
+{% block content %}
+
+	<div id="left-column" class="span-13 colborder">
+		<span class="caps">{{ object.type }}</span><br/><br/>
+		<h2><span class="alt">{{ object.name }}</span></h2>
+
+		Starts on <span class="caps">{{ object.date_start|date:"D d M Y" }}</span>
+		at <span class="caps">{{ object.date_start|time:"H:i" }}</span> (that's {{ object.date_start|timeuntil }} from today) <br/>
+		Ends on <span class="caps">{{ object.date_end|date:"D d M Y" }}</span>
+		at <span class="caps">{{ object.date_end|time:"H:i" }}</span>
+		<hr class="space"/>
+		
+		Country: <span class="caps">{{ object.country.long_name }} [{{ object.country.key.name }}]</span><br/>
+		
+		{% if object.region %}
+			Region:  <span class="caps">{{ object.region.key.name }}</span><br/>
+		{% endif %}
+		
+		Address: <span class="caps">{{ object.address }}</span>
+		<hr class="space"/>		
+
+		Recurrence: <span class="caps">{{ object.recurrent }}</span>
+    	<hr class="space"/>
+
+		This event is
+		{% if object.free %}
+			<span class="caps">free</span>
+		{% else %}
+		    <span class="caps">not free</span>
+		{% endif %}
+		.
+
+	</div>
+	
+	
+	<div id="right-column" class="span-10 last">
+		<div id="map_canvas" style="width:300px; height:220px;"></div>
+		<hr class="space"/>
+	</div>
+	
+	
+	<hr/>
+	<div id="description" class="span-24 last">
+	<div id="event_{{ object.key.id }}"></div>
+	<h2 class="alt">Details</h2>
+		{{ object.description|safe }}
+		<hr class="space"/>
+	<h2 class="alt">Fees</h2>		
+		{{ object.fees|safe }}
+		<hr class="space"/>
+		{% if object.file_set %}
+	<h2 class="alt">Attachments</h2>
+		    <ul>
+		    {% for file in object.file_set %}
+		        <li>
+		        	<a href="{{ file.get_absolute_url }}">{{ file.name }}</a>
+		        </li>
+		    {% endfor %}
+		    </ul>
+		<hr class="space"/>		    
+		{% endif %}
+
+		Event added by <span class="caps">{{ object.creator.username }}</span>
+	</div>
+
+
+{% endblock %}

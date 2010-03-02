@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Setup FB Connect account{% endblock %}
+
+{% block content %}
+
+<div class="notice">
+This is the first time you've logged in using your Facebook account.
+<br/>
+Your account is now linked to Facebook, however we'd appreciate your email, so that we can optionally send updates directly to your inbox.
+</div>
+
+
+
+<form action="." method="post">
+    <table>
+        {{ form }}
+    </table>
+    <input type="submit" value="save" />
+</form>
+{% endblock %}

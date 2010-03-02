@@ -1,0 +1,22 @@
+Hi {{ user.first_name }},
+
+Welcome to Art of Living Events website.
+
+{% comment %}
+{% if profile.current_location %}
+We've noticed you're currently based in {{ profile.current_location }}.
+{% endif %}
+{% endcomment %}
+
+
+To check events near you go to http://www.artoflivingevents.org/events/
+Note, that you can subscribe to receive update email messages by using Search&Subscribe button.
+If you star any event, you'll also receive updates about it.
+
+If you're organising course or other event and want to adveritse it, just go to http://www.artoflivingevents.org/events/add/
+
+
+Hope you'll enjoy our service!
+
+yours,
+www.artoflivingevents.org team

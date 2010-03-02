@@ -1,0 +1,124 @@
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+    dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}"
+    xml:lang="{% firstof LANGUAGE_CODE 'en' %}"
+    lang="{% firstof LANGUAGE_CODE 'en' %}">
+  <head>
+    <title>{% block title %}{% endblock %} - site name</title>
+    {% block css %}
+      <link rel="stylesheet" type="text/css"  media="screen, projection" href="{{ MEDIA_URL }}combined-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
+      <link rel="stylesheet" type="text/css"  media="print" href="{{ MEDIA_URL }}combined-print-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
+      <!--[if IE]>
+        <link rel="stylesheet" type="text/css" media="screen, projection" href="{{ MEDIA_URL }}ie.css">
+      <![endif]-->
+    {% endblock %}
+
+    {% block js %}
+        <!--
+            missing http: is to prevent warning about unsecure content
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+        -->
+      <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+    {% if DEBUG %}
+      <script type="text/javascript" src="{{ MEDIA_URL }}events.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}events/events.js"></script>
+    {% else %}
+      <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>    
+    {% endif %}
+    {% endblock %}
+
+    {% block extra-head %}{% endblock %}
+  </head>
+
+  <body>
+  
+    <div class="container" id="header">
+    {% block header %}
+
+            <div class="span-4" id="logo">
+                <a href="/"><img src="{{ MEDIA_URL }}global/logo.gif" alt="" /></a>
+            </div>
+
+            <div class="menu span-16" id="upper-menu">
+
+                <a href="/">Home</a> |
+                <a href="{% url events.views.view_event_list %}">Search</a> |
+                <a href="{% url events.views.view_event_add %}">Add new event</a> |
+                <a href="{% url events.views.view_event_mine %}">Events I added</a> |
+                <a href="{% url events.views.view_event_subscribed %}">My favourite events</a> |
+                <a href="{% url events.views.view_event_stats %}">Statistics</a>
+                {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+    		            || <a href="/admin/">Admin interface</a>
+	                {% endif %}
+                {% endif %}
+                
+            </div>
+            <div class="span-4 last" id="upper-menu-user">
+                {% if user.is_authenticated %}
+                    Welcome, {{ user.username }}!
+                    <a href="{% url django.contrib.auth.views.logout %}">Logout</a>
+                {% else %}
+                    <a href="{% url django.contrib.auth.views.login %}">Login</a>
+                    <a href="{% url registration.views.register %}">Register</a>
+                {% endif %}
+            </div>
+            
+            <hr class="space"/>
+
+
+    {% endblock %}
+    </div>
+
+    <div class="container ">
+    {% block main %}
+
+        {% include "messages.html" %}
+
+        <hr class="space"/>
+
+        <div id="content" class="span-24 last">
+            {% block content-header %}{% endblock %}
+            {% block content %}{% endblock %}
+        </div>
+
+    {% endblock %}
+    </div>
+
+
+    <div id="footer" class="container">
+ 	{% block footer %}
+
+        <hr class="space">
+        <hr/>
+
+        <div class="span-24 last">
+
+<p style="float:right">
+<a href="http://artofliving.org">artofliving.org</a> | <a href="http://uk.artofliving.org">uk.artofliving.org</a>
+</p>
+
+<p style="float:right; clear:right;">
+All Right Reserved (C) 2009, The Art of Living Foundation
+</p>
+<a style="float:right; clear:right;" href="mailto:tomasz.kustrzynski@gmail.com">Site by Tomasz Kustrzynski</a>
+
+   	    </div>
+
+{% comment %}
+   	    <div class="span-6 last">
+            <a href="http://code.google.com/p/app-engine-patch/"><img src="{{ MEDIA_URL }}global/powered-by-app-engine-patch.png" alt="powered by app-engine-patch" /></a>
+   	    </div>
+{% endcomment %}
+        <hr class="space">
+
+
+   	{% endblock %}
+    </div>
+ 
+  </body>
+</html>

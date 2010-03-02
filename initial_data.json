@@ -1,0 +1,11 @@
+
+[
+	
+	{"pk": "GB", "model": "events.country", "fields":
+		{"long_name": "United Kingdom"}},
+		
+	{"pk": "OZ", "model": "events.country", "fields":
+		{"long_name": "Oz"}}
+		
+
+]

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Homepage{% endblock %}
+
+    {% block extra-head %}
+        <script type="text/javascript">
+    
+        google.load('visualization', '1', {'packages': ['geomap']});
+        
+        
+    function drawMap()
+    {
+        var data = new google.visualization.DataTable();
+        data.addRows({{ events_per_country|length }});
+
+        data.addColumn('string', 'Country');
+        data.addColumn('number', 'Number of events');
+     
+        {% for short_name, long_name, number in events_per_country %}
+	        data.setValue({{ forloop.counter0 }}, 0, "{{ short_name }}");
+	        data.setValue({{ forloop.counter0 }}, 1, {{ number }});
+        {% endfor %}
+        
+        var options = {};
+        options['dataMode'] = 'regions';
+        options['width'] = '400px';
+        options['height'] = '300px';
+        options['showLegend'] = false;
+        
+        var container = document.getElementById('map_canvas');
+        var geomap = new google.visualization.GeoMap(container);
+
+        geomap.draw(data, options);
+    }
+
+
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+            drawMap();
+
+            FeaturedEvents.initialize("#event_list", {% if user.is_authenticated %}true{% else %}false{% endif %} );
+            FeaturedEvents.loadDataFeatured(1);
+
+            RegionComboBox.attachOnChangeToComboBox("#id_country", "#id_region", true, true);
+        })
+    })
+            
+    </script>
+
+    {% endblock %}
+    
+    {% block main %}
+
+        {% include "messages.html" %}
+
+        <div id="welcome" class="span-24 last">
+        <center><h2 class="alt">The Art of Living is a multi-faceted, not-for-profit educational and humanitarian NGO with a presence in over 140 countries. Founded in 1982 by His Holiness Sri Sri Ravi Shankar, the Art of Living, today, is one of the largest voluntary organisations in the world. 
+        </h2>
+        There are currently <span class="caps">{{ events_count }}</span> events scheduled all over the world.</center>
+        </div>
+        
+        <hr class="space"/>
+        <hr class="space"/>
+
+        <div id="left-col" class="span-12 colborder">
+			<form action="/events/" method="get" id="search_form">
+		        {% include "search_form.html" %}
+		    </form>
+        
+	        <div id="map_canvas" style="width:400px; height:300px; margin:0 auto; border: 1px solid #ccc;"></div>
+        </div>
+
+
+        <div id="right-col" class="span-11 last">
+
+		{% if user.is_authenticated %}
+		    {% include "homepage-right-col-auth.html" %}
+		{% else %}
+		    {% include "homepage-right-col-notauth.html" %}
+		{% endif %}
+
+
+        </div>
+
+        <hr class="space"/>
+        <hr/>
+        
+        <div class="span-24 last">
+        <center><span class="caps">Featured events</span></center>
+        <hr class="space"/>
+	        <div id="event_list">
+
+	        </div>
+        </div>
+
+    {% endblock %}

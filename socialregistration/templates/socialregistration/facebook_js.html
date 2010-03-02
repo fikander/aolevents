@@ -1,0 +1,24 @@
+
+<script type="text/javascript">
+    FB_RequireFeatures(["XFBML"],
+        function() {
+            FB.Facebook.init("{{ facebook_api_key }}", "{% url facebook_xd_receiver %}", {"permsToRequestOnConnect":"email", });
+        }
+    );
+
+    function facebookConnect(form){
+        FB.Connect.requireSession();
+        FB.Facebook.get_sessionState().waitUntilReady(
+            function(){
+                form.submit();
+            }
+        );
+    }
+    
+    function facebookCallPublish(msg, attachment, action_link) {
+            FB.ensureInit(function() {
+                FB.Connect.streamPublish('', attachment, action_link);
+            });
+    }
+    
+</script>

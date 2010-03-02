@@ -1,0 +1,76 @@
+{% extends "base-2col.html" %}
+{% block title %}My events{% endblock %}
+
+{% block extra-head %}
+
+    <script type="text/javascript">
+    google.setOnLoadCallback( function() {
+        $(document).ready(function(){
+
+            // favourite buttons
+  {% for fav in object_list %}
+            FavButton.makeButton( "#event_{{ fav.event.key.id }}", true, true );
+  {% endfor %}
+
+        })
+    })
+    </script>
+{% endblock %}
+
+{% block left-column %}
+{% endblock %}
+
+{% block content %}
+
+<h2>Subscriptions</h2>
+<span class="notice">I'll receive information about new and updated events in the areas I selected</span>
+<hr class="space"/>
+
+    <table>
+    {% for subscription in subscription_list %}
+        <tr><td>
+
+        {% if subscription.country %}
+            {{ subscription.country.long_name }}, 
+            {% if subscription.region %}
+                {{ subscription.region.long_name }}
+            {% else %}
+                All regions
+            {% endif %}    
+        {% else %}
+            Whole world
+        {% endif %}
+
+        </td><td>
+        <button type="button" name="goto_{{ subscription.key.id }}" value="search" onclick="javascript:window.location='{% url events.views.view_event_list subscription_id=subscription.key.id %}';">Go</button>
+        <button type="button" name="delete_{{ subscription.key.id }}" value="search" onclick="javascript:window.location='{% url events.views.view_delete_subscription key_id=subscription.key.id %}';">Delete</button>
+        </td></tr>
+    {% endfor %}
+    </table>
+
+
+<h2>Events I'm interested in</h2>
+<span class="notice">I'll receive notification about changes to these events and reminders few days before the start.</span>
+<hr class="space"/>
+
+<table>
+  {% for fav in object_list %}
+    <tr>
+      <td><div id="event_{{ fav.event.key.id }}"></div></td>
+      <td><a href="{% url events.views.view_event_show key=fav.event.key %}">{{ fav.event }}</a></td>
+    </tr>
+  {% endfor %}
+<table>
+
+<div>
+  {% if has_previous %}
+    <a href="{% url events.views.view_event_subscribed %}?page={{ previous }}">&lt;-previous</a>
+  {% endif %}
+  {% if has_next %}
+    <a href="{% url events.views.view_event_subscribed %}?page={{ next }}">next-&gt;</a>
+  {% endif %}
+</div>
+
+
+
+{% endblock %}

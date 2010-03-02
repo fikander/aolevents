@@ -1,0 +1,38 @@
+
+        <div class="bluebox">
+
+<p>You're logged in as
+<span class="caps"> {% if user.first_name %} {{ user.first_name }} {% else %} {{ user.username }} {% endif %} </span>
+You can now <a href="/events/subscribed/">check your favourite events</a>, <a href="/events/add/">create new events</a> and <a href="/events/mine/">manage events you've created</a>.
+
+{% comment %}
+	<div style="margin:0 auto; width:300px;">
+
+		<a href="/events/subscribed/">
+		<button type="submit" style="width:300px;">	    <img class="icons-fav-20 icons-fav-on-20"/>My favourites</button>
+		</a>
+
+		<a href="/">
+		<button type="submit" style="width:300px;">Preferences (not implemented yet)</button>
+		</a>
+
+		<a href="/events/add/">
+		<button type="submit" style="width:300px;">Create new event</button>
+		</a>
+
+		<a href="/events/mine/">
+		<button type="submit" style="width:300px;">Events I added</button>
+		</a>
+
+	</div>
+
+{% endcomment %}
+
+</p>
+</div>
+
+<span class="caps" ><center>Here's video that will help you get started</center></span>
+<br/>
+<center>
+<object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/3A84pdIYmic&hl=en_US&fs=1&rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/3A84pdIYmic&hl=en_US&fs=1&rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object>
+</center>

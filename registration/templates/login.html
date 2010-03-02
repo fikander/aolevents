@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% load facebook_tags %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="notice">
+We recommend you use {% facebook_button %} if you own Facebook account. You may need to <a href="/account/register/">register</a> if you don't.
+</div>
+
+<h1>Login</h1>
+<form action="{{ request.get_full_path }}" method="post">
+  <table>{{ form }}</table>
+  <input type="submit" value="Login" />
+</form>
+{% endblock content %}

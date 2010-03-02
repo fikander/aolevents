@@ -1,0 +1,17 @@
+{% extends 'base-1col.html' %}
+{% block title %}Delete event{% endblock %}
+
+{% block content %}
+<h1>Delete event</h1>
+<a href="{% url events.views.view_event_list %}">Back to listing</a>
+<a href="{% url events.views.view_event_show key_id=object.key.id %}">Back to event</a>
+
+<p>
+Do you really want to delete {{ object }}?
+
+<form action="" method="post">
+  <input type="submit" name="delete" value="Delete" />
+</form>
+</p>
+
+{% endblock %}
